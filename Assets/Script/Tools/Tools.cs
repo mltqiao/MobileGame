@@ -8,11 +8,12 @@ public class Tools : MonoBehaviour
 {
     public static bool IfInNamedUI(string uiName)
     {
+#if UNITY_EDITOR
         var graphicRaycaster = FindObjectsOfType<GraphicRaycaster>();
         var eventData = new PointerEventData(EventSystem.current)
         {
             pressPosition = Input.mousePosition,
-            position = Input.mousePosition
+            position = Input.mousePosition,
         };
         var list = new List<RaycastResult>();
         foreach (var item in graphicRaycaster)
@@ -23,6 +24,10 @@ public class Tools : MonoBehaviour
                 return true;
             }
         }
+        return false;
+#elif UNITY_ANDROID
+
+#endif
         return false;
     }
 }

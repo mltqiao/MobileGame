@@ -19,6 +19,7 @@ public class Compass : MonoBehaviour
     void Update()
     {
         JoystickFollowingInput();
+#if UNITY_EDITOR
         if (Input.GetMouseButtonUp(0))
         {
             if (Tools.IfInNamedUI("JoystickImg"))
@@ -28,6 +29,40 @@ public class Compass : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+#elif UNITY_ANDROID
+        {
+            if (AndroidTouchesManager.touchesInformation.Count == 1)
+            {
+                if (Input.touches[0].phase == TouchPhase.Ended)
+                {
+                    objJoystick.transform.localPosition = Vector3.zero;
+                    objTestArea.SetActive(true);
+                    gameObject.SetActive(false);
+                }
+            }
+            else if (AndroidTouchesManager.touchesInformation.Count == 2)
+            {
+                if (AndroidTouchesManager.touchesInformation[0].fingerId == Input.touches[0].fingerId)
+                {
+                    if (Input.touches[0].phase == TouchPhase.Ended)
+                    {
+                        objJoystick.transform.localPosition = Vector3.zero;
+                        objTestArea.SetActive(true);
+                        gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    if (Input.touches[1].phase == TouchPhase.Ended)
+                    {
+                        objJoystick.transform.localPosition = Vector3.zero;
+                        objTestArea.SetActive(true);
+                        gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+#endif
     }
 
     private void JoystickFollowingInput()
@@ -38,5 +73,7 @@ public class Compass : MonoBehaviour
         {
             objJoystick.transform.position = objBackground.transform.position + v3JoystickDirection * JoystickMaxDeltaDistance;
         }
+        
+        MovemontController.V3TargetDirection = new Vector3(v3JoystickDirection.x, v3JoystickDirection.z, v3JoystickDirection.y);
     }
 }
